@@ -1,0 +1,26 @@
+Package: MMDCopula
+Type: Package
+Title: Robust Estimation of Copulas by Maximum Mean Discrepancy
+Version: 0.1.0
+Authors@R: c(
+    person("Alexis", "Derumigny", email = "a.f.f.derumigny@utwente.nl", role = c("aut", "cre")),
+    person("Pierre", "Alquier", email = "pierre.alquier.stat@gmail.com", role = "aut")
+	)
+Description: Provides functions for the robust estimation of 
+	parametric families of copulas using minimization of 
+	the Maximum Mean Discrepancy.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Depends: 
+	R (>= 4.0)
+Imports: 
+    VineCopula,
+    cubature,
+    pcaPP,
+    randtoolbox,
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

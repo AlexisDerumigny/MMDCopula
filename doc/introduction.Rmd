@@ -1,0 +1,71 @@
+---
+title: "The MMD copula package: robust estimation of parametric copula models by MMD minimization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The MMD copula package: robust estimation of parametric copula models by MMD minimization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(MMDCopula)
+library(VineCopula)
+set.seed(1)
+```
+
+
+# Simulation of a synthetic dataset
+
+We simulate 500 points from a Gaussian copula with parameter $0.5$.
+From this data, the parameter of the Gaussian copula is estimated, by Canonical Maximum Likelihood Estimation (MLE) and by Maximum Mean Discrepancy Minimization (MMD).
+
+```{r}
+
+my_data = BiCopSim(N = 500, family = 1, par = 0.5)
+
+estimator_MLE = BiCopEst(u1 = my_data[,1], u2 = my_data[,2], 
+                         family = 1, method = "mle")
+
+estimator_MMD = BiCopEstMMD(u1 = my_data[,1], u2 = my_data[,2], family = 1)
+
+print(estimator_MLE)
+print(estimator_MMD)
+
+```
+Both estimators are close to the true value, and the MLE estimator is slightly closer.
+
+## Adding contamination
+
+We now add a contamination on 20 points of the dataset that are replaced by outliers in the top-left corner of the unit square $[0 , 0.001] \times [0.999, 1]$.
+
+```{r}
+
+my_data_contam = my_data
+
+number_outliers = 20
+q = 0.001
+my_data_contam[1:number_outliers, 1] = runif(n = number_outliers, min = 0, max = q)
+my_data_contam[1:number_outliers, 2] = runif(n = number_outliers, min = 1-q, max = 1)
+
+estimator_MLE = BiCopEst(u1 = my_data_contam[,1], u2 = my_data_contam[,2], 
+                         family = 1, method = "mle")
+
+estimator_MMD = BiCopEstMMD(u1 = my_data_contam[,1], u2 = my_data_contam[,2], family = 1)
+print(estimator_MLE)
+print(estimator_MMD)
+
+```
+
+We can see that now the MLE estimator is very far away from the true value while the MMD estimators is still near the true value (even if it is farther away than in the uncontaminated case).
+
+
+
+
+
