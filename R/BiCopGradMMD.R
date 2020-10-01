@@ -40,6 +40,10 @@
 #'     \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
 #'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
 #'   }
+#'  Each of these names can receive the suffix ".KG", such as "gaussian.KG"
+#'  to indicates that the kernel \eqn{k(x,y)} is replaced by
+#'  \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
+#'  function of the standard Normal distribution.
 #'
 #' @param gamma parameter \eqn{\gamma} to be used in the kernel.
 #'
@@ -48,8 +52,8 @@
 #' @param epsilon the differential of \code{VineCopula::\link[VineCopula]{BiCopTau2Par}()}
 #'   is computed thanks to a finite difference with increment \code{epsilon}.
 #'
-#' @param ndrawings number of replicas of the stochastic estimate of the gradient drawn at each step.
-#'   The gradient is computed using the average of these replicas.
+#' @param ndrawings number of replicas of the stochastic estimate of the gradient drawn
+#' at each step. The gradient is computed using the average of these replicas.
 #'
 #' @param family the chosen family of copulas
 #'   (see the documentation of the class \code{VineCopula::\link[VineCopula]{BiCop}()}
@@ -94,7 +98,7 @@
 #'
 BiCopGradMMD <- function(
   u1, u2, family, tau, par = NULL, par2=0,
-  kernel = "exp-l2", gamma=0.25, alpha=1, epsilon=0.0001,
+  kernel = "gaussian.KG", gamma=0.95, alpha=1, epsilon=0.0001,
   method = "QMCV", quasiRNG = "sobol", ndrawings=10)
 {
   if (!is.null(par))

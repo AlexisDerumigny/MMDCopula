@@ -4,7 +4,9 @@ Title: Robust Estimation of Copulas by Maximum Mean Discrepancy
 Version: 0.1.0
 Authors@R: c(
     person("Alexis", "Derumigny", email = "a.f.f.derumigny@utwente.nl", role = c("aut", "cre")),
-    person("Pierre", "Alquier", email = "pierre.alquier.stat@gmail.com", role = "aut")
+    person("Pierre", "Alquier", email = "pierre.alquier.stat@gmail.com", role = "aut"),
+    person("Jean-David", "Fermanian", email = "Jean-David.Fermanian@ensae.fr", role = "aut"),
+    person("Badr Eddine", "Cherief Abdellatif", email = "Badr.Eddine.CHERIEF.ABDELLATIF@ensae.fr", role = "aut")
 	)
 Description: Provides functions for the robust estimation of 
 	parametric families of copulas using minimization of 

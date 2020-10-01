@@ -18,3 +18,13 @@ an \eqn{n \times 2} matrix containing the samples
 This functions simulates independent realizations
 from the Marshall-Olkin copula.
 }
+\examples{
+# Simulation from a Marshall-Olkin copula with parameter alpha = 0.5
+BiCopSim.MO(n = 100, alpha = 0.5)
+
+
+}
+\seealso{
+\code{\link{BiCopEst.MO}} for the estimation of
+Marshall-Olkin copulas.
+}

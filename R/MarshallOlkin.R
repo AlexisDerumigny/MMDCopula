@@ -10,22 +10,29 @@
 #'
 #' @return an \eqn{n \times 2} matrix containing the samples
 #'
+#' @seealso \code{\link{BiCopEst.MO}} for the estimation of
+#' Marshall-Olkin copulas.
+#'
+#' @examples
+#' # Simulation from a Marshall-Olkin copula with parameter alpha = 0.5
+#' BiCopSim.MO(n = 100, alpha = 0.5)
+#'
 #'
 #' @export
 #'
 BiCopSim.MO <- function(n, alpha) {
 
   ST = matrix(data = NA, nrow = n, ncol = 2)
-  ST[,1] = rbeta(n = n, shape1 = 2-alpha, shape2 = 1)
-  ST[,2] = runif(n = n, 0, ST[,1])
+  ST[,1] = stats::rbeta(n = n, shape1 = 2-alpha, shape2 = 1)
+  ST[,2] = stats::runif(n = n, 0, ST[,1])
   P = alpha/(2-alpha)
 
   for (i in 1:n)
   {
-    if (runif(1,0,1) < P) {
+    if (stats::runif(1,0,1) < P) {
       ST[i,2] = ST[i,1]
     }
-    else if (runif(1,0,1) < 0.5) {
+    else if (stats::runif(1,0,1) < 0.5) {
       AUX = ST[i,2]; ST[i,2] = ST[i,1]; ST[i,1] = AUX
     }
 
@@ -36,6 +43,9 @@ BiCopSim.MO <- function(n, alpha) {
 
 #' Estimation of Marshall-Olkin copulas
 #'
+#' @param u1 vector of observations of the first coordinate, in \eqn{[0,1]}.
+#' @param u2 vector of observations of the second coordinate, in \eqn{[0,1]}.
+#'
 #' @param method a character giving the name of the estimation method, among:
 #'   \itemize{
 #'     \item \code{curve}: \eqn{\alpha} is estimated by inversion of
@@ -45,13 +55,61 @@ BiCopSim.MO <- function(n, alpha) {
 #'     \item \code{MMD}: \eqn{\alpha} is estimated by MMD optimization
 #'   }
 #'
+#' @param par.start starting parameter of the gradient descent.
+#' (only used for \code{method = "MMD"})
+#'
+#' @param kernel the kernel used in the MMD distance
+#' (only used for \code{method = "MMD"}) :
+#'   it can be a function taking in parameter \code{(u1, u2, v1, v2, gamma, alpha)}
+#'   or a name giving the kernel to use in the list:
+#'   \itemize{
+#'     \item \code{gaussian}: Gaussian kernel \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_2^2)
+#'     }{k(x,y) = exp( - || (x-y) / gamma ||_2^2)}
+#'     \item \code{exp.l2}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_2)
+#'     }{k(x,y) = exp( - || (x-y) / gamma ||_2)}
+#'     \item \code{exp.l1}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_1)
+#'     }{k(x,y) = exp( - || (x-y) / gamma ||_1)}
+#'     \item \code{inv.l2}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_2)^\alpha
+#'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_2 )^\alpha}
+#'     \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
+#'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
+#'   }
+#'  Each of these names can receive the suffix ".KG", such as "gaussian.KG"
+#'  to indicates that the kernel \eqn{k(x,y)} is replaced by
+#'  \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
+#'  function of the standard Normal distribution.
+#'
+#' @param gamma parameter \eqn{\gamma} to be used in the kernel.
+#' (only used for \code{method = "MMD"})
+#'
+#' @param alpha parameter \eqn{\alpha} to be used in the kernel, if any.
+#' (only used for \code{method = "MMD"})
+#'
+#' @param ndrawings number of replicas of the stochastic estimate of the gradient
+#' drawn at each step. The gradient is computed using the average of these replicas.
+#' (only used for \code{method = "MMD"})
+#'
+#' @param niter number of iterations of the stochastic gradient algorithm.
+#' (only used for \code{method = "MMD"})
+#'
+#' @param naveraging number of full run of the stochastic gradient algorithm
+#' that are averaged at the end to give the final estimated parameter.
+#' (only used for \code{method = "MMD"})
+#'
+#'
+#' @seealso \code{\link{BiCopSim.MO}} for the estimation of
+#' Marshall-Olkin copulas.
+#'
+#' @examples
+#' U <- BiCopSim.MO(n = 1000, alpha = 0.2)
+#' estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD")
 #'
 #' @export
 #'
 BiCopEst.MO <- function(
   u1, u2, method,
-  par=0.5, kernel = "exp-l2",
-  gamma=0.3, alpha=1,
+  par.start = 0.5, kernel = "gaussian.KG",
+  gamma=0.95, alpha=1,
   niter=100, ndrawings=10, naveraging = 1)
 {
   verifData(u1, u2)
@@ -79,7 +137,8 @@ BiCopEst.MO <- function(
       }
 
       estimator = BiCopEst.MO.MMD.MC(
-        u1 = u1, u2 = u2, par = par, kernelFun = kernelFun,
+        u1 = u1, u2 = u2, par.start = par.start,
+        kernelFun = kernelFun,
         gamma = gamma, alpha = alpha,
         niter = niter, ndrawings = ndrawings, naveraging = naveraging)
     }
@@ -110,16 +169,16 @@ BiCopEst.MO.itau = function(u1,u2)
 
 # Estimation of Marshall-Olkin copulas by MMD
 BiCopEst.MO.MMD.MC = function(
-  u1, u2, par=0.5, kernelFun,
-  gamma=0.3, alpha=1,
-  niter=100, ndrawings=10, naveraging = 1)
+  u1, u2, par.start = 0.5, kernelFun,
+  gamma = 0.3, alpha = 1,
+  niter = 100, ndrawings = 10, naveraging = 1)
 {
 
   n = length(u1)
   estimatorsA = rep(NA, naveraging)
 
   for (i in 1:naveraging){
-    aIter = par
+    aIter = par.start
     for (i_iter in 1:niter){
       Grad = 0
       for (j in 1:ndrawings){
@@ -159,7 +218,6 @@ BiCopEst.MO.MMD.MC = function(
     estimatorsA[i] = aIter
   }
 
-  # # The averaging is done on the Kendall's tau and not on the parameter
   estim = mean( estimatorsA[i] )
 
   return(estim)

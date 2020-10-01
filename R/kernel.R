@@ -39,8 +39,8 @@ findKernelFunction = function(kernel) {
 # Gaussian ---------------------------------------------------
 
 KerMMD.gaussian.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
-  D1 = (qnorm(u1) - qnorm(v1))/gamma
-  D2 = (qnorm(u2) - qnorm(v2))/gamma
+  D1 = (stats::qnorm(u1) - stats::qnorm(v1))/gamma
+  D2 = (stats::qnorm(u2) - stats::qnorm(v2))/gamma
 
   Ker <- exp(-D1^2-D2^2)
   return(Ker)
@@ -58,8 +58,8 @@ KerMMD.gaussian = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 # Exp.l2 ------------------------------------------------------
 
 KerMMD.exp.l2.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
-  D1 = (qnorm(u1)-qnorm(v1))/gamma
-  D2 = (qnorm(u2)-qnorm(v2))/gamma
+  D1 = (stats::qnorm(u1)-stats::qnorm(v1))/gamma
+  D2 = (stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
   Ker <- exp(-sqrt(D1^2+D2^2))
   return(Ker)
@@ -77,8 +77,8 @@ KerMMD.exp.l2 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 # Exp.l1 ------------------------------------------------------
 
 KerMMD.exp.l1.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
-  D1 = abs(qnorm(u1)-qnorm(v1))/gamma
-  D2 = abs(qnorm(u2)-qnorm(v2))/gamma
+  D1 = abs(stats::qnorm(u1)-stats::qnorm(v1))/gamma
+  D2 = abs(stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
   Ker <- exp(-D1-D2)
   return(Ker)
@@ -96,8 +96,8 @@ KerMMD.exp.l1 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 # Inv.l2 ------------------------------------------------------
 
 KerMMD.inv.l2.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
-  D1 = (qnorm(u1)-qnorm(v1))/gamma
-  D2 = (qnorm(u2)-qnorm(v2))/gamma
+  D1 = (stats::qnorm(u1)-stats::qnorm(v1))/gamma
+  D2 = (stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
   Ker <- 1/(1+sqrt(D1^2+D2^2))^alpha
   return(Ker)
@@ -115,8 +115,8 @@ KerMMD.inv.l2 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 # Inv.l1 ------------------------------------------------------
 
 KerMMD.inv.l1.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
-  D1 = abs(qnorm(u1)-qnorm(v1))/gamma
-  D2 = abs(qnorm(u2)-qnorm(v2))/gamma
+  D1 = abs(stats::qnorm(u1)-stats::qnorm(v1))/gamma
+  D2 = abs(stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
   Ker <- 1/(1+D1+D2)^alpha
   return(Ker)
