@@ -77,10 +77,19 @@ Estimation of Marshall-Olkin copulas
 }
 \examples{
 U <- BiCopSim.MO(n = 1000, alpha = 0.2)
+estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD",niter = 1, ndrawings = 1)
+\donttest{
 estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD")
+}
 
+}
+\references{
+Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2020).
+Estimation of copulas via Maximum Mean Discrepancy.
+ArXiv preprint \href{https://arxiv.org/abs/2010.00408}{arxiv:2010.00408}
 }
 \seealso{
 \code{\link{BiCopSim.MO}} for the estimation of
 Marshall-Olkin copulas.
+\code{\link{BiCopEstMMD}} for the estimation of other parametric copula families by MMD.
 }

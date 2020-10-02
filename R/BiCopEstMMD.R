@@ -30,17 +30,22 @@
 #'
 #'
 #' @seealso \code{VineCopula::\link[VineCopula]{BiCopEst}()} for other methods of estimation
-#'   such as Maxium Likelihood Estimation or Inversion of Kendall's tau.
+#'   such as Maximum Likelihood Estimation or Inversion of Kendall's tau.
+#' \code{\link{BiCopGradMMD}()} for the computation of the stochastic gradient.
+#' \code{\link{BiCopEst.MO}} for the estimation of Marshall-Olkin copulas by MMD.
 #'
-#' @seealso \code{\link{BiCopGradMMD}()} for the computation of the stochastic gradient
+#' @references Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2020).
+#' Estimation of copulas via Maximum Mean Discrepancy.
+#' ArXiv preprint \href{https://arxiv.org/abs/2010.00408}{arxiv:2010.00408}
 #'
 #'
 #' @examples
 #' # Estimation of a bivariate Gaussian copula with correlation 0.5.
 #' dataSampled = VineCopula::BiCopSim(N = 500, family = 1, par = 0.5)
-#' estimator = BiCopEstMMD(u1 = dataSampled[,1], u2 = dataSampled[,2], family = 1)
+#' estimator = BiCopEstMMD(u1 = dataSampled[,1], u2 = dataSampled[,2], family = 1, niter=10)
 #' estimator$par
 #'
+#' \donttest{
 #' # Estimation of a bivariate Student copula with correlation 0.5 and 5 degrees of freedom
 #' dataSampled = VineCopula::BiCopSim(N = 1000, family = 2, par = 0.5, par2 = 5)
 #' estimator = BiCopEstMMD(u1 = dataSampled[,1], u2 = dataSampled[,2], family = 2)
@@ -69,6 +74,8 @@
 #' data("daxreturns", package = "VineCopula")
 #' BiCopEstMMD(u1 = daxreturns[,1], u2 = daxreturns[,2], family = 1)
 #' estimator$par
+#' }
+#'
 #'
 #' @export
 #'
