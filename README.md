@@ -4,7 +4,7 @@ Package MMDCopula
 
 **Main functions**
 
-* BiCopEstMMD : estimate the parameter of a bivariate copula by 
+* BiCopEstMMD : estimate the parameter of a bivariate copula by MMD minimization
 
 
 **Functions for simulation and inference for the Marshall-Olkin copula**
