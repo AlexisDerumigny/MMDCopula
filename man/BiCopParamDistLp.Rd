@@ -8,11 +8,12 @@ BiCopParamDistLp(
   family,
   par,
   par_p,
-  par2 = 0,
-  par2_p = 0,
+  par2 = par,
+  par2_p = par_p,
   family_p = family,
   p,
-  type
+  type,
+  maxEval = 0
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ BiCopParamDistLp(
 \item{type}{type of the functions considered.
 Can be \code{cdf} for the distance between the two cumulative distribution functions
 or \code{pdf} for the distance between the two probability density functions.}
+
+\item{maxEval}{maximum number of evaluation of the function be integrated.
+If 0, then no maximum limit is given.}
 }
 \value{
 a list of four items
@@ -56,15 +60,17 @@ the distribution or between the densities of two bivariate copulas.
 \examples{
 # Distance between the densities of a Gaussian copula with correlation 0.5
 # and a Gaussian copula with correlation 0.2
-BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = 2, type = "cdf")
+BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = 2, type = "cdf", maxEval = 10)
 
 # Distance between the cdf of a Student copula
 # with correlation 0.5 and 4 degrees of freedom
 # and a Student copula with the same correlation but 20 degrees of freedom
-BiCopParamDistLp(family = 2, par = 0.5, par_p = 0.5, par2 = 5, par2_p = 20, p = 2, type = "pdf")
+BiCopParamDistLp(family = 2, par = 0.5, par_p = 0.5,
+par2 = 5, par2_p = 20, p = 2, type = "pdf", maxEval = 10)
 
 # Distance between the densities of a Gaussian copula with correlation 0.5
 # and of a Student copula with correlation 0.5 and 15 degrees of freedom
-BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.5, par2_p = 15, family_p = 2, p = 2, type = "pdf")
+BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.5, par2_p = 15,
+family_p = 2, p = 2, type = "pdf", maxEval = 10)
 
 }

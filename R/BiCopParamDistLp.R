@@ -25,6 +25,9 @@
 #' Can be \code{cdf} for the distance between the two cumulative distribution functions
 #' or \code{pdf} for the distance between the two probability density functions.
 #'
+#' @param maxEval maximum number of evaluation of the function be integrated.
+#' If 0, then no maximum limit is given.
+#'
 #' @return a list of four items
 #'   \itemize{
 #'     \item \code{distance} the value of the distance
@@ -39,21 +42,23 @@
 #' @examples
 #' # Distance between the densities of a Gaussian copula with correlation 0.5
 #' # and a Gaussian copula with correlation 0.2
-#' BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = 2, type = "cdf")
+#' BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = 2, type = "cdf", maxEval = 10)
 #'
 #' # Distance between the cdf of a Student copula
 #' # with correlation 0.5 and 4 degrees of freedom
 #' # and a Student copula with the same correlation but 20 degrees of freedom
-#' BiCopParamDistLp(family = 2, par = 0.5, par_p = 0.5, par2 = 5, par2_p = 20, p = 2, type = "pdf")
+#' BiCopParamDistLp(family = 2, par = 0.5, par_p = 0.5,
+#' par2 = 5, par2_p = 20, p = 2, type = "pdf", maxEval = 10)
 #'
 #' # Distance between the densities of a Gaussian copula with correlation 0.5
 #' # and of a Student copula with correlation 0.5 and 15 degrees of freedom
-#' BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.5, par2_p = 15, family_p = 2, p = 2, type = "pdf")
+#' BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.5, par2_p = 15,
+#' family_p = 2, p = 2, type = "pdf", maxEval = 10)
 #'
 #' @export
 #'
-BiCopParamDistLp <- function(family, par, par_p, par2 = 0, par2_p = 0, family_p = family,
-                             p, type)
+BiCopParamDistLp <- function(family, par, par_p, par2 = par, par2_p = par_p, family_p = family,
+                             p, type, maxEval = 0)
 {
   switch(
     type,
@@ -79,8 +84,9 @@ BiCopParamDistLp <- function(family, par, par_p, par2 = 0, par2_p = 0, family_p 
       }
     })
 
-  result = cubature::hcubature(f = toIntegrate, lower = c(0,0),
-                                  upper = c(1,1), vectorInterface = TRUE)
+  result = cubature::hcubature(f = toIntegrate,
+                               lower = c(0,0), upper = c(1,1),
+                               vectorInterface = TRUE, maxEval = maxEval)
   result[["distance"]] = result$integral^(1/p)
 
   return (result[c("distance", "integral", "error", "returnCode")])

@@ -348,7 +348,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb2-9"><a href="#cb2-9"></a><span class="kw">print</span>(estimator_MLE)</span>
 <span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.5, tau = 0.33)</span></span>
 <span id="cb2-11"><a href="#cb2-11"></a><span class="kw">print</span>(estimator_MMD)</span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.49, tau = 0.33)</span></span></code></pre></div>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.5, tau = 0.33)</span></span></code></pre></div>
 <p>Both estimators are close to the true value, and the MLE estimator is slightly closer.</p>
 <div id="adding-contamination" class="section level2">
 <h2>Adding contamination</h2>
@@ -368,7 +368,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-13"><a href="#cb3-13"></a><span class="kw">print</span>(estimator_MLE)</span>
 <span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.03, tau = 0.02)</span></span>
 <span id="cb3-15"><a href="#cb3-15"></a><span class="kw">print</span>(estimator_MMD)</span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.42, tau = 0.28)</span></span></code></pre></div>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; Bivariate copula: Gaussian (par = 0.44, tau = 0.29)</span></span></code></pre></div>
 <p>We can see that now the MLE estimator is very far away from the true value while the MMD estimators is still near the true value (even if it is farther away than in the uncontaminated case).</p>
 </div>
 </div>
