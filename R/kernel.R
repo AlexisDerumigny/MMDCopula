@@ -8,23 +8,23 @@ findKernelFunction = function(kernel) {
 
     "gaussian" = { kernelFun <- KerMMD.gaussian },
 
-    "gaussian.KG" = { kernelFun <- KerMMD.gaussian.KG },
+    "gaussian.Phi" = { kernelFun <- KerMMD.gaussian.Phi },
 
     "exp-l2" = { kernelFun <- KerMMD.exp.l2 },
 
-    "exp-l2.KG" = { kernelFun <- KerMMD.exp.l2.KG },
+    "exp-l2.Phi" = { kernelFun <- KerMMD.exp.l2.Phi },
 
     "exp-l1" = { kernelFun <- KerMMD.exp.l1 },
 
-    "exp-l1.KG" = { kernelFun <- KerMMD.exp.l1.KG },
+    "exp-l1.Phi" = { kernelFun <- KerMMD.exp.l1.Phi },
 
     "inv-l2" = { kernelFun <- KerMMD.inv.l2 },
 
-    "inv-l2.KG" = { kernelFun <- KerMMD.inv.l2.KG },
+    "inv-l2.Phi" = { kernelFun <- KerMMD.inv.l2.Phi },
 
     "inv-l1" = { kernelFun <- KerMMD.inv.l1 },
 
-    "inv-l1.KG" = { kernelFun <- KerMMD.inv.l1.KG },
+    "inv-l1.Phi" = { kernelFun <- KerMMD.inv.l1.Phi },
 
     {
       stop(paste0("Unknown kernel: ",kernel))
@@ -38,7 +38,7 @@ findKernelFunction = function(kernel) {
 
 # Gaussian ---------------------------------------------------
 
-KerMMD.gaussian.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
+KerMMD.gaussian.Phi = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
   D1 = (stats::qnorm(u1) - stats::qnorm(v1))/gamma
   D2 = (stats::qnorm(u2) - stats::qnorm(v2))/gamma
 
@@ -57,7 +57,7 @@ KerMMD.gaussian = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 
 # Exp.l2 ------------------------------------------------------
 
-KerMMD.exp.l2.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
+KerMMD.exp.l2.Phi = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
   D1 = (stats::qnorm(u1)-stats::qnorm(v1))/gamma
   D2 = (stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
@@ -76,7 +76,7 @@ KerMMD.exp.l2 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 
 # Exp.l1 ------------------------------------------------------
 
-KerMMD.exp.l1.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
+KerMMD.exp.l1.Phi = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
   D1 = abs(stats::qnorm(u1)-stats::qnorm(v1))/gamma
   D2 = abs(stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
@@ -95,7 +95,7 @@ KerMMD.exp.l1 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 
 # Inv.l2 ------------------------------------------------------
 
-KerMMD.inv.l2.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
+KerMMD.inv.l2.Phi = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
   D1 = (stats::qnorm(u1)-stats::qnorm(v1))/gamma
   D2 = (stats::qnorm(u2)-stats::qnorm(v2))/gamma
 
@@ -114,7 +114,7 @@ KerMMD.inv.l2 = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
 
 # Inv.l1 ------------------------------------------------------
 
-KerMMD.inv.l1.KG = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
+KerMMD.inv.l1.Phi = function(u1, u2, v1, v2, gamma=0.3, alpha=1) {
   D1 = abs(stats::qnorm(u1)-stats::qnorm(v1))/gamma
   D2 = abs(stats::qnorm(u2)-stats::qnorm(v2))/gamma
 

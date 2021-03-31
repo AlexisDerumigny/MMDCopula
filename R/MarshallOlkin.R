@@ -27,16 +27,14 @@ BiCopSim.MO <- function(n, alpha) {
   ST[,2] = stats::runif(n = n, 0, ST[,1])
   P = alpha/(2-alpha)
 
-  for (i in 1:n)
-  {
-    if (stats::runif(1,0,1) < P) {
-      ST[i,2] = ST[i,1]
-    }
-    else if (stats::runif(1,0,1) < 0.5) {
-      AUX = ST[i,2]; ST[i,2] = ST[i,1]; ST[i,1] = AUX
-    }
+  doEqual = stats::runif(n,0,1) < P
+  ST[,2] = ifelse(doEqual, ST[,1], ST[,2])
 
-  }
+  doExchange = (stats::runif(n,0,1) < 0.5) & !doEqual
+  AUX = ST[,2]
+  ST[,2] = ifelse(doExchange, ST[,1], ST[,2])
+  ST[,1] = ifelse(doExchange, AUX, ST[,1])
+
   return(ST)
 }
 
@@ -74,7 +72,7 @@ BiCopSim.MO <- function(n, alpha) {
 #'     \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
 #'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
 #'   }
-#'  Each of these names can receive the suffix ".KG", such as "gaussian.KG"
+#'  Each of these names can receive the suffix ".Phi", such as "gaussian.Phi"
 #'  to indicates that the kernel \eqn{k(x,y)} is replaced by
 #'  \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
 #'  function of the standard Normal distribution.
@@ -96,6 +94,7 @@ BiCopSim.MO <- function(n, alpha) {
 #' that are averaged at the end to give the final estimated parameter.
 #' (only used for \code{method = "MMD"})
 #'
+#' @return the estimated parameter (\code{alpha}) of the Marshall-Olkin copula.
 #'
 #' @seealso \code{\link{BiCopSim.MO}} for the estimation of
 #' Marshall-Olkin copulas.
@@ -108,7 +107,7 @@ BiCopSim.MO <- function(n, alpha) {
 #'
 #' @examples
 #' U <- BiCopSim.MO(n = 1000, alpha = 0.2)
-#' estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD",niter = 1, ndrawings = 1)
+#' estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD", niter = 1, ndrawings = 1)
 #' \donttest{
 #' estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD")
 #' }
@@ -117,9 +116,10 @@ BiCopSim.MO <- function(n, alpha) {
 #'
 BiCopEst.MO <- function(
   u1, u2, method,
-  par.start = 0.5, kernel = "gaussian.KG",
+  par.start = 0.5, kernel = "gaussian.Phi",
   gamma=0.95, alpha=1,
-  niter=100, ndrawings=10, naveraging = 1)
+  niter=100, ndrawings=10, naveraging = 1,
+  methodMC = "MC")
 {
   verifData(u1, u2)
 
@@ -131,7 +131,8 @@ BiCopEst.MO <- function(
     },
 
     "itau" = {
-      estimator = BiCopEst.MO.itau(u1, u2)
+      result = BiCopEst.MO.itau(u1, u2)
+      return(result)
     },
 
 
@@ -145,16 +146,46 @@ BiCopEst.MO <- function(
         kernelFun <- kernel
       }
 
-      estimator = BiCopEst.MO.MMD.MC(
-        u1 = u1, u2 = u2, par.start = par.start,
-        kernelFun = kernelFun,
-        gamma = gamma, alpha = alpha,
-        niter = niter, ndrawings = ndrawings, naveraging = naveraging)
+      if (methodMC == "MC"){
+        estimator = BiCopEst.MO.MMD.MC(
+          u1 = u1, u2 = u2, par.start = par.start,
+          kernelFun = kernelFun,
+          gamma = gamma, alpha = alpha,
+          niter = niter, ndrawings = ndrawings, naveraging = naveraging)
+      }
+      # else if (methodMC == "QMCV"){
+      #
+      #   if (is.character(quasiRNG)) {
+      #     switch (
+      #       quasiRNG,
+      #
+      #       "sobol" = {quasiRNGFun <- function (n) {
+      #         return (randtoolbox::sobol(n = n, dim = 2))}},
+      #
+      #       "halton" = {quasiRNGFun <- function (n) {
+      #         return (randtoolbox::halton(n = n, dim = 2))}},
+      #
+      #       "torus" = {quasiRNGFun <- function (n) {
+      #         return (randtoolbox::torus(n = n, dim = 2))}}
+      #     )
+      #   } else {
+      #     quasiRNGFun <- quasiRNG
+      #   }
+      #
+      #   estimator = BiCopEst.MO.MMD.QMCV(
+      #     u1 = u1, u2 = u2, par.start = par.start,
+      #     kernelFun = kernelFun,
+      #     gamma = gamma, alpha = alpha,
+      #     niter = niter, ndrawings = ndrawings, naveraging = naveraging,
+      #     quasiRNGFun = quasiRNGFun)
+      # }
+
     }
 
   )
 
-  return (estimator)
+  tau = estimator / (2 - estimator)
+  return (list(tau = tau, par = estimator))
 
 }
 
@@ -172,7 +203,7 @@ BiCopEst.MO.curve = function(u1,u2)
 BiCopEst.MO.itau = function(u1,u2)
 {
   tau = pcaPP::cor.fk(u1, u2)
-  return(2*tau/(1+tau))
+  return(list(tau = tau, par = 2*tau/(1+tau)))
 }
 
 
@@ -227,7 +258,7 @@ BiCopEst.MO.MMD.MC = function(
     estimatorsA[i] = aIter
   }
 
-  estim = mean( estimatorsA[i] )
+  estim = mean( estimatorsA )
 
   return(estim)
 }
@@ -235,7 +266,7 @@ BiCopEst.MO.MMD.MC = function(
 #
 # # Estimation of Marshall-Olkin copulas by MMD
 # BiCopEst.MO.MMD.QMCV = function(
-#   u1, u2, par=0.5, kernelFun,
+#   u1, u2, par.start=0.5, kernelFun,
 #   gamma=0.3, alpha=1,
 #   quasiRNGFun, niter=100, ndrawings=10, naveraging = 1)
 # {
@@ -244,7 +275,7 @@ BiCopEst.MO.MMD.MC = function(
 #   estimatorsA = rep(NA, naveraging)
 #
 #   for (i in 1:naveraging){
-#     aIter = par
+#     aIter = par.start
 #     for (i_iter in 1:niter){
 #       Grad = 0
 #       for (j in 1:ndrawings){
@@ -284,8 +315,7 @@ BiCopEst.MO.MMD.MC = function(
 #     estimatorsA[i] = aIter
 #   }
 #
-#   # # The averaging is done on the Kendall's tau and not on the parameter
-#   estim = mean( estimatorsA[i] )
+#   estim = mean( estimatorsA )
 #
 #   return(estim)
 # }

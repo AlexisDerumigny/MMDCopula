@@ -9,12 +9,13 @@ BiCopEst.MO(
   u2,
   method,
   par.start = 0.5,
-  kernel = "gaussian.KG",
+  kernel = "gaussian.Phi",
   gamma = 0.95,
   alpha = 1,
   niter = 100,
   ndrawings = 10,
-  naveraging = 1
+  naveraging = 1,
+  methodMC = "MC"
 )
 }
 \arguments{
@@ -50,7 +51,7 @@ BiCopEst.MO(
     \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
   }
- Each of these names can receive the suffix ".KG", such as "gaussian.KG"
+ Each of these names can receive the suffix ".Phi", such as "gaussian.Phi"
  to indicates that the kernel \eqn{k(x,y)} is replaced by
  \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
  function of the standard Normal distribution.}
@@ -72,12 +73,15 @@ drawn at each step. The gradient is computed using the average of these replicas
 that are averaged at the end to give the final estimated parameter.
 (only used for \code{method = "MMD"})}
 }
+\value{
+the estimated parameter (\code{alpha}) of the Marshall-Olkin copula.
+}
 \description{
 Estimation of Marshall-Olkin copulas
 }
 \examples{
 U <- BiCopSim.MO(n = 1000, alpha = 0.2)
-estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD",niter = 1, ndrawings = 1)
+estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD", niter = 1, ndrawings = 1)
 \donttest{
 estimatedPar <- BiCopEst.MO(u1 = U[,1], u2 = U[,2], method = "MMD")
 }

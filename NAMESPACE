@@ -3,5 +3,6 @@
 export(BiCopEst.MO)
 export(BiCopEstMMD)
 export(BiCopGradMMD)
+export(BiCopMMDConfInt)
 export(BiCopParamDistLp)
 export(BiCopSim.MO)

@@ -57,7 +57,7 @@ The initial Kendall's tau is then computed thanks to
    \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
    }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
  }
-Each of these names can receive the suffix ".KG", such as "gaussian.KG"
+Each of these names can receive the suffix ".Phi", such as "gaussian.Phi"
 to indicates that the kernel \eqn{k(x,y)} is replaced by
 \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
 function of the standard Normal distribution.}
