@@ -6,7 +6,8 @@
 * `BiCopSim.MO` now returns a list with the estimated parameter and Kendall's tau for consistency with the other `BiCopEstMMD` function.
 * New function `BiCopMMDConfInt` for bootstrapped- and subsampling-based confidence intervals.
 * Renaming of kernels such as `gaussian.KG` to `gaussian.Phi` for coherence.
-
+* Improvement of the stochastic gradient interface.
+* Better handling of limiting cases (Kendall's tau close to the boundary).
 
 # MMDCopula 0.1.0
 

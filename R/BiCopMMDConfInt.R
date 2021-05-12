@@ -3,8 +3,8 @@
 #' Confidence intervals for the estimated parameter
 #' of a bivariate parametric copula using MMD estimation
 #'
-#' @param u1 vector of observations of the first coordinate, in \eqn{[0,1]}.
-#' @param u2 vector of observations of the second coordinate, in \eqn{[0,1]}.
+#' @param x1 vector of observations of the first coordinate.
+#' @param x2 vector of observations of the second coordinate.
 #'
 #' @param family parametric family of copulas.
 #' Supported families are: \itemize{
@@ -40,21 +40,21 @@
 #'
 #' @examples
 #' data = VineCopula::BiCopSim(N = 500, family = 1, par = 0.3)
-#' result = BiCopMMDConfInt(u1 = data[,1], u2 = data[,2], family = 1, nResampling = 2)
+#' result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1,
+#'   nResampling = 2, subsamplingSize = 50)
 #' \donttest{
 #' data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
-#' result = BiCopMMDConfInt(u1 = data[,1], u2 = data[,2], family = 1)
+#' result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1)
 #' result$CI
 #' }
 #'
 #' @export
 #'
 BiCopMMDConfInt <- function(
-  u1, u2, family,
-  nResampling = 100, subsamplingSize = length(u1),
+  x1, x2, family,
+  nResampling = 100, subsamplingSize = length(x1),
   corrSubSampling = TRUE , level = 0.95, ...)
 {
-  verifData(u1, u2)
 
   # Preparation of the arguments
   arguments <- list(...)
@@ -103,9 +103,11 @@ BiCopMMDConfInt <- function(
     stop("Unknown family ", family, " in BiCopMMDConfInt.")
   }
 
-  n = length(u1)
+  n = length(x1)
   vecPar = rep(NA, nResampling)
   vecTau = rep(NA, nResampling)
+  u1 = VineCopula::pobs(x1)
+  u2 = VineCopula::pobs(x2)
 
   # Estimation using the whole sample
   estResult = do.call(estFUN, c(list(u1 = u1, u2 = u2), arguments))
@@ -117,8 +119,8 @@ BiCopMMDConfInt <- function(
     # NP bootstrap
     for (iResampling in 1:nResampling){
       which_selected = sample.int(n = n, size = n, replace = TRUE)
-      u1_st = u1[which_selected]
-      u2_st = u2[which_selected]
+      u1_st = VineCopula::pobs(x1[which_selected])
+      u2_st = VineCopula::pobs(x2[which_selected])
 
       result = do.call(estFUN, c(list(u1 = u1_st, u2 = u2_st), arguments))
       vecTau[iResampling] = result$tau
@@ -141,8 +143,8 @@ BiCopMMDConfInt <- function(
     # Subsampling
     for (iResampling in 1:nResampling){
       which_selected = sample.int(n = n, size = subsamplingSize, replace = TRUE)
-      u1_st = u1[which_selected]
-      u2_st = u2[which_selected]
+      u1_st = VineCopula::pobs(x1[which_selected])
+      u2_st = VineCopula::pobs(x2[which_selected])
 
       result = do.call(estFUN, c(list(u1 = u1_st, u2 = u2_st), arguments))
       vecTau[iResampling] = result$tau
@@ -153,16 +155,16 @@ BiCopMMDConfInt <- function(
     pbapply::closepb(pb)
 
     if (corrSubSampling){
-      qLow = estPar - n^(-1/2) * (1 - subsamplingSize / n)^{-1/2} *
+      qLow = estPar - (1 - subsamplingSize / n)^{-1/2} *
         stats::quantile(vecPar - estPar, probs = 1 - (1-level)/2 )
 
-      qHigh = estPar - n^(-1/2) * (1 - subsamplingSize / n)^{-1/2} *
+      qHigh = estPar - (1 - subsamplingSize / n)^{-1/2} *
         stats::quantile(vecPar - estPar, probs = (1-level)/2 )
     } else {
-      qLow = estPar - n^(-1/2) *
+      qLow = estPar -
         stats::quantile(vecPar - estPar, probs = 1 - (1-level)/2 )
 
-      qHigh = estPar - n^(-1/2) *
+      qHigh = estPar -
         stats::quantile(vecPar - estPar, probs = (1-level)/2 )
     }
 

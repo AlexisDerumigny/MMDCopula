@@ -6,20 +6,20 @@
 of a bivariate parametric copula using MMD estimation}
 \usage{
 BiCopMMDConfInt(
-  u1,
-  u2,
+  x1,
+  x2,
   family,
   nResampling = 100,
-  subsamplingSize = length(u1),
+  subsamplingSize = length(x1),
   corrSubSampling = TRUE,
   level = 0.95,
   ...
 )
 }
 \arguments{
-\item{u1}{vector of observations of the first coordinate, in \eqn{[0,1]}.}
+\item{x1}{vector of observations of the first coordinate.}
 
-\item{u2}{vector of observations of the second coordinate, in \eqn{[0,1]}.}
+\item{x2}{vector of observations of the second coordinate.}
 
 \item{family}{parametric family of copulas.
 Supported families are: \itemize{
@@ -50,10 +50,11 @@ of a bivariate parametric copula using MMD estimation
 }
 \examples{
 data = VineCopula::BiCopSim(N = 500, family = 1, par = 0.3)
-result = BiCopMMDConfInt(u1 = data[,1], u2 = data[,2], family = 1, nResampling = 2)
+result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1,
+  nResampling = 2, subsamplingSize = 50)
 \donttest{
 data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
-result = BiCopMMDConfInt(u1 = data[,1], u2 = data[,2], family = 1)
+result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1)
 result$CI
 }
 

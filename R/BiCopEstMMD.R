@@ -12,6 +12,7 @@
 #' @param tau the copula family can be parametrized by the parameter \code{par}
 #'   or by Kendall's tau.
 #'   Here, the user can choose the initial value of tau for the stochastic gradient algorithm.
+#'   If \code{NULL}, a random value is chosen instead.
 #'
 #' @param par if different from \code{NULL}, the parameter \code{tau} is ignored,
 #'   and the initial parameter must be given here.
@@ -20,8 +21,16 @@
 #'
 #' @param par2 initial value for the second parameter, if any. (Works only for Student copula).
 #'
-#' @param niter number of iterations of the stochastic gradient algorithm.
+#' @param niter the stochastic gradient algorithm is composed of two phases:
+#' a first "burn-in" phase and a second "averaging" phase.
+#' If \code{niter} is of size \code{1}, the same number of iterations is used for
+#' both phases of the stochastic gradient algorithm. If \code{niter} is of size \code{2},
+#' then \code{niter[1]} iterations are done for the burn-in phase and \code{niter[2]}
+#' for the averaging phase.
 #'
+#' @param C_eta a multiplicative constant controlling for the size of the gradient descent step.
+#' The step size is then computed as \code{C_eta / sqrt(i_iter)}
+#' where \code{i_iter} is the index of the current iteration of the stochastic gradient algorithm.
 #'
 #' @inheritParams BiCopGradMMD
 #'
@@ -82,8 +91,9 @@
 #'
 BiCopEstMMD <- function(
   u1, u2,
-  family, tau = 0.1, par = NULL, par2 = NULL,
-  kernel = "gaussian", gamma=0.23, alpha=1, niter=100, epsilon=0.0001,
+  family, tau = NULL, par = NULL, par2 = NULL,
+  kernel = "gaussian", gamma=0.23, alpha=1,
+  niter= 100, C_eta = 1, epsilon=0.0001,
   method = "QMCV", quasiRNG = "sobol", ndrawings=10)
 {
   verifData(u1, u2)
@@ -96,51 +106,74 @@ BiCopEstMMD <- function(
     kernelFun <- kernel
   }
 
+  # If only one number of iterations is given,
+  # it is reused for the burn-in phase and the averaging phase
+  niter = rep(niter, length.out = 2)
+  if (is.null(tau)){
+    # We try a random guess
+    # tau = pcaPP::cor.fk(u1, u2)
+    if (family %in% c(1, 5, 6,16,26,36)){
+      tau = runif(n = 1, min = -0.95, max = 0.95)
+    } else if (family %in% c(3, 23, 4, 24)){
+      tau = runif(n = 1, min = 0.05, max = 0.95)
+    } else if (family %in% c(13, 33, 14, 34)){
+      tau = runif(n = 1, min = -0.95, max = 0.05)
+    }
+  }
   switch (
     method,
 
     "MC" = {
       if (family %in% c(1, 3,13,23,33, 4,14,24,34, 5, 6,16,26,36)){
-        if (!is.null(par))
-        {
+        if (!is.null(par)) {
           tau = VineCopula::BiCopPar2Tau(family = family, par = par, par2 = par2)
         }
 
+        # 1- Burn-in phase
         tauIter = tau
-        for (i_iter in 1:niter){
+        for (i_iter in 1:niter[1]){
           tauIter = tauIter -
-            BiCopGradMMD.MC.1par(
+            C_eta * BiCopGradMMD.MC.1par(
               u1 = u1, u2 = u2, family = family, tau = tauIter,
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
               ndrawings = ndrawings) / sqrt(i_iter)
         }
-        for (i_iter in (niter+1):(2*niter)){
-          tauIter = tauIter -
-            BiCopGradMMD.MC.1par(
-              u1 = u1, u2 = u2, family = family, tau = tauIter,
+        # 2- Averaging phase
+        tauIter_vec = rep(NA, niter[2]+1)
+        tauIter_vec[1] = tauIter
+        for (i_iter in 1:niter[2]){
+          tauIter_vec[i_iter+1] = tauIter_vec[i_iter] -
+            C_eta * BiCopGradMMD.MC.1par(
+              u1 = u1, u2 = u2, family = family, tau = tauIter_vec[i_iter],
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
-              ndrawings = ndrawings) / (sqrt(i_iter) * i_iter)
+              ndrawings = ndrawings) / sqrt(niter[1] + i_iter)
         }
-        estim = VineCopula::BiCop(family, tau = tauIter)
+        estim = VineCopula::BiCop(family, tau = mean(tauIter_vec))
 
       } else {
-
+        warning("The estimation can be unstable for the 2-parameters families.")
+        # 1- Burn-in phase
         paramIter = c(tau, par2)
-        for (i_iter in 1:niter){
+        for (i_iter in 1:niter[1]){
           paramIter = paramIter -
-            BiCopGradMMD.MC.2par(
+            C_eta * BiCopGradMMD.MC.2par(
               u1 = u1, u2 = u2, family = family, tau = paramIter[1], par2 = paramIter[2],
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
               ndrawings = ndrawings) / sqrt(i_iter)
         }
-        for (i_iter in (niter+1):(2*niter)){
-          paramIter = paramIter -
-            BiCopGradMMD.MC.2par(
-              u1 = u1, u2 = u2, family = family, tau = paramIter[1], par2 = paramIter[2],
+        # 2- Averaging phase
+        paramIter_mat = matrix(ncol = 2, nrow = niter[2]+1)
+        paramIter_mat[1,] = paramIter
+        for (i_iter in 1:niter[2] ){
+          paramIter_mat[i_iter+1,] = paramIter_mat[i_iter,] -
+            C_eta * BiCopGradMMD.MC.2par(
+              u1 = u1, u2 = u2, family = family,
+              tau = paramIter_mat[i_iter,1], par2 = paramIter_mat[i_iter,2],
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
-              ndrawings = ndrawings) / (sqrt(i_iter) * i_iter)
+              ndrawings = ndrawings) / sqrt(niter[1] + i_iter)
         }
-        estim = VineCopula::BiCop(family, tau = paramIter[1], par2 = paramIter[2])
+        estim = VineCopula::BiCop(family, tau = mean(paramIter_mat[,1]),
+                                  par2 = mean(paramIter_mat[,2]) )
       }
 
     },
@@ -164,36 +197,52 @@ BiCopEstMMD <- function(
       }
 
       if (family %in% c(1, 3,13,23,33, 4,14,24,34, 5, 6,16,26,36)){
-        if (!is.null(par))
-        {
+        if (!is.null(par)) {
           tau = VineCopula::BiCopPar2Tau(family = family, par = par, par2 = par2)
         }
+        if (family == 1){
+          tauMin = -0.999
+          tauMax = 0.999
+        } else if (family == 5){
+          tauMin = -0.96
+          tauMax = 0.96
+        } else if (family %in% c(3,23,4,24,6,26) ){
+          tauMin = 0.001
+          tauMax = 0.999
+        } else if (family %in% c(13,33,14,34,16,36) ){
+          tauMin = -0.999
+          tauMax = -0.001
+        }
 
+        # 1- Burn-in phase
         tauIter = tau
-        for (i_iter in 1:niter){
+        for (i_iter in 1:niter[1]){
           tauIter = tauIter -
-            BiCopGradMMD.QMCV.1par(
+            C_eta * BiCopGradMMD.QMCV.1par(
               u1 = u1, u2 = u2, family = family, tau = tauIter,
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
               quasiRNG = quasiRNGFun, ndrawings = ndrawings) / sqrt(i_iter)
-          if (family %in% c(3,23,4,24,6,26) & tauIter < 0.001){ tauIter = 0.001}
+          tauIter = max(tauMin, min(tauIter, tauMax)) # Constraining the range of the tau
         }
-        for (i_iter in (niter+1):(2*niter)){
-          tauIter = tauIter -
-            BiCopGradMMD.QMCV.1par(
-              u1 = u1, u2 = u2, family = family, tau = tauIter,
+        # 2- Averaging phase
+        tauIter_vec = rep(NA, niter[2]+1)
+        tauIter_vec[1] = tauIter
+        for (i_iter in 1:niter[2]){
+          tauIter_vec[i_iter+1] = tauIter_vec[i_iter] -
+            C_eta * BiCopGradMMD.QMCV.1par(
+              u1 = u1, u2 = u2, family = family, tau = tauIter_vec[i_iter],
               kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
-              quasiRNG = quasiRNGFun, ndrawings = ndrawings) / (sqrt(i_iter) * i_iter)
-          if (family %in% c(3,23,4,24,6,26) & tauIter < 0.001){ tauIter = 0.001}
+              quasiRNG = quasiRNGFun, ndrawings = ndrawings) / sqrt(niter[1] + i_iter)
+          tauIter_vec[i_iter+1] = max(tauMin, min(tauIter_vec[i_iter+1], tauMax))
         }
-        estim = VineCopula::BiCop(family, tau = tauIter)
+        estim = VineCopula::BiCop(family, tau = mean(tauIter_vec))
 
       } else if (family == 2) {
         warning("The estimation can be unstable for the Student family.")
         estim = BiCopEstMMD.QMCV.student(
           u1 = u1, u2 = u2,
           kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
-          quasiRNGFun = quasiRNGFun, ndrawings = ndrawings, niter = niter)
+          quasiRNGFun = quasiRNGFun, ndrawings = ndrawings, niter = niter, C_eta = C_eta)
 
       } else {
         stop("family not implemented yet in BiCopEstMMD.")
@@ -210,13 +259,14 @@ BiCopEstMMD <- function(
 BiCopEstMMD.QMCV.student <- function(
   u1, u2, par2 = 8,
   kernelFun, gamma, alpha, epsilon,
-  quasiRNGFun, ndrawings, niter)
+  quasiRNGFun, ndrawings, niter, C_eta)
 {
   par = VineCopula::BiCopTau2Par(family = 2, tau = pcaPP::cor.fk(u1, u2))
 
+  # 1- Burn-in phase
   paramIter = c(par, par2)
 
-  for (i_iter in 1:niter){
+  for (i_iter in 1:niter[1]){
     if        (paramIter[2] < 5) {alpha2 =  1000
     } else if (paramIter[2] < 6) {alpha2 =  4000
     } else                       {alpha2 = 15000 }
@@ -233,22 +283,27 @@ BiCopEstMMD.QMCV.student <- function(
     if (paramIter[1] > 0.9999) {paramIter[1] = 0.9999}
   }
 
-  for (i_iter in (niter+1):(2*niter)){
-    if (paramIter[2] < 6) {alpha2 = 1000
+  # 2- Averaging phase
+  paramIter_mat = matrix(ncol = 2, nrow = niter[2]+1)
+  paramIter_mat[1,] = paramIter
+  for (i_iter in 1:niter[2]){
+    if (paramIter_mat[i_iter, 2] < 6) {alpha2 = 1000
     } else {alpha2 = 10000}
 
-    paramIter = paramIter - c(5,alpha2) *
+    paramIter_mat[i_iter+1,] = paramIter_mat[i_iter,] -
+      C_eta * c(5,alpha2) *
       BiCopGradMMD.QMCV.2par.par(
         u1 = u1, u2 = u2, family = 2, par = paramIter[1], par2 = paramIter[2],
         kernelFun = kernelFun, gamma = gamma, alpha = alpha, epsilon = epsilon,
-        quasiRNG = quasiRNGFun, ndrawings = ndrawings) / (sqrt(i_iter) * i_iter)
+        quasiRNG = quasiRNGFun, ndrawings = ndrawings) / sqrt(niter[1] + i_iter)
 
-    if (paramIter[2] < 2.0001) {paramIter[2] = 2.001}
-    if (paramIter[1] < -0.9999) {paramIter[1] = -0.9999}
-    if (paramIter[1] > 0.9999) {paramIter[1] = 0.9999}
+    if (paramIter_mat[i_iter+1, 2] < 2.0001) {paramIter_mat[i_iter+1, 2] = 2.001}
+    if (paramIter_mat[i_iter+1, 1] < -0.9999) {paramIter_mat[i_iter+1, 1] = -0.9999}
+    if (paramIter_mat[i_iter+1, 1] > 0.9999) {paramIter_mat[i_iter+1, 1] = 0.9999}
   }
 
-  estim = VineCopula::BiCop(family = 2, par = paramIter[1], par2 = paramIter[2])
+  estim = VineCopula::BiCop(family = 2,
+                            par = mean(paramIter_mat[,1]), par2 = mean(paramIter_mat[,2]))
   return (estim)
 }
 

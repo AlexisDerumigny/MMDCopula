@@ -260,7 +260,7 @@ BiCopGradMMD.QMCV.1par <- function(
       kernelFun(U[,1], U[,2], V[,1], V[,2], gamma, alpha) -
       kernelFun(u1   , u2   , U[,1], U[,2], gamma, alpha)
 
-    G = mean(G * KerCross)
+    G = mean(G * KerCross, na.rm = TRUE)
     Gfin = G/j + Gfin*(j-1)/j
   }
 

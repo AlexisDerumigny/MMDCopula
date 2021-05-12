@@ -9,13 +9,14 @@ BiCopEstMMD(
   u1,
   u2,
   family,
-  tau = 0.1,
+  tau = NULL,
   par = NULL,
   par2 = NULL,
   kernel = "gaussian",
   gamma = 0.23,
   alpha = 1,
   niter = 100,
+  C_eta = 1,
   epsilon = 1e-04,
   method = "QMCV",
   quasiRNG = "sobol",
@@ -33,7 +34,8 @@ for the available families).}
 
 \item{tau}{the copula family can be parametrized by the parameter \code{par}
 or by Kendall's tau.
-Here, the user can choose the initial value of tau for the stochastic gradient algorithm.}
+Here, the user can choose the initial value of tau for the stochastic gradient algorithm.
+If \code{NULL}, a random value is chosen instead.}
 
 \item{par}{if different from \code{NULL}, the parameter \code{tau} is ignored,
 and the initial parameter must be given here.
@@ -66,7 +68,16 @@ function of the standard Normal distribution.}
 
 \item{alpha}{parameter \eqn{\alpha} to be used in the kernel, if any.}
 
-\item{niter}{number of iterations of the stochastic gradient algorithm.}
+\item{niter}{the stochastic gradient algorithm is composed of two phases:
+a first "burn-in" phase and a second "averaging" phase.
+If \code{niter} is of size \code{1}, the same number of iterations is used for
+both phases of the stochastic gradient algorithm. If \code{niter} is of size \code{2},
+then \code{niter[1]} iterations are done for the burn-in phase and \code{niter[2]}
+for the averaging phase.}
+
+\item{C_eta}{a multiplicative constant controlling for the size of the gradient descent step.
+The step size is then computed as \code{C_eta / sqrt(i_iter)}
+where \code{i_iter} is the index of the current iteration of the stochastic gradient algorithm.}
 
 \item{epsilon}{the differential of \code{VineCopula::\link[VineCopula]{BiCopTau2Par}()}
 is computed thanks to a finite difference with increment \code{epsilon}.}
