@@ -55,7 +55,8 @@ result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1,
 \donttest{
 data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
 result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1)
-result$CI
+result$CI.Tau
+result$CI.Par
 }
 
 }

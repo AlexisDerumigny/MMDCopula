@@ -45,7 +45,8 @@
 #' \donttest{
 #' data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
 #' result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1)
-#' result$CI
+#' result$CI.Tau
+#' result$CI.Par
 #' }
 #'
 #' @export
@@ -112,6 +113,7 @@ BiCopMMDConfInt <- function(
   # Estimation using the whole sample
   estResult = do.call(estFUN, c(list(u1 = u1, u2 = u2), arguments))
   estPar = estResult$par
+  estTau = estResult$tau
 
   pb = pbapply::startpb(min = 0, max = nResampling)
   if (subsamplingSize == n){
@@ -130,12 +132,20 @@ BiCopMMDConfInt <- function(
     }
     pbapply::closepb(pb)
 
-    qLow = estPar - stats::quantile(
+    qLowPar = estPar - stats::quantile(
       vecPar - estPar,
       probs = 1 - (1-level)/2 )
 
-    qHigh = estPar - stats::quantile(
+    qHighPar = estPar - stats::quantile(
       vecPar - estPar,
+      probs = (1-level)/2 )
+
+    qLowTau = estTau - stats::quantile(
+      vecTau - estTau,
+      probs = 1 - (1-level)/2 )
+
+    qHighTau = estTau - stats::quantile(
+      vecTau - estTau,
       probs = (1-level)/2 )
 
   } else {
@@ -155,24 +165,42 @@ BiCopMMDConfInt <- function(
     pbapply::closepb(pb)
 
     if (corrSubSampling){
-      qLow = estPar - (1 - subsamplingSize / n)^{-1/2} *
+      qLowPar = estPar - (1 - subsamplingSize / n)^{-1/2} *
         stats::quantile(vecPar - estPar, probs = 1 - (1-level)/2 )
 
-      qHigh = estPar - (1 - subsamplingSize / n)^{-1/2} *
+      qHighPar = estPar - (1 - subsamplingSize / n)^{-1/2} *
         stats::quantile(vecPar - estPar, probs = (1-level)/2 )
+
+      qLowTau = estTau - (1 - subsamplingSize / n)^{-1/2} *
+        stats::quantile(vecTau - estTau, probs = 1 - (1-level)/2 )
+
+      qHighTau = estTau - (1 - subsamplingSize / n)^{-1/2} *
+        stats::quantile(vecTau - estTau, probs = (1-level)/2 )
     } else {
-      qLow = estPar -
+      qLowPar = estPar -
         stats::quantile(vecPar - estPar, probs = 1 - (1-level)/2 )
 
-      qHigh = estPar -
+      qHighPar = estPar -
         stats::quantile(vecPar - estPar, probs = (1-level)/2 )
+
+      qLowTau = estTau -
+        stats::quantile(vecTau - estTau, probs = 1 - (1-level)/2 )
+
+      qHighTau = estTau -
+        stats::quantile(vecTau - estTau, probs = (1-level)/2 )
     }
 
   }
-  CI = c(qLow, qHigh)
-  names(CI) <- paste(prettyNum(100 * c((1-level)/2 , (1 - (1-level)/2)  ), "%" ) )
+  CI.Par = c(qLowPar, qHighPar)
+  CI.Par = c(qLowPar, qHighPar)
+  names(CI.Par) <- paste(prettyNum(100 * c((1-level)/2 , (1 - (1-level)/2)  ), "%" ) )
 
-  return(list(CI = CI, vecPar = vecPar, vecTau = vecTau))
+  CI.Tau = c(qLowTau, qHighTau)
+  CI.Tau = c(qLowTau, qHighTau)
+  names(CI.Tau) <- paste(prettyNum(100 * c((1-level)/2 , (1 - (1-level)/2)  ), "%" ) )
+
+  return(list(CI.Par = CI.Par, CI.Tau = CI.Tau,
+              vecPar = vecPar, vecTau = vecTau))
 }
 
 
