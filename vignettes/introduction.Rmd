@@ -66,6 +66,23 @@ print(estimator_MMD)
 We can see that now the MLE estimator is very far away from the true value while the MMD estimators is still near the true value (even if it is farther away than in the uncontaminated case).
 
 
+## Constructing confidence intervals for the MMD estimator
+
+We now compare the confidence intervals for the estimated parameter in the contaminated and in the non-contaminated case. These intervals are constructed using either the nonparametric bootstrap or using subsampling
+
+```{r}
+
+# With the nonparametric bootstrap
+CI_bootstrap = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
+                              family = 1, level = 0.95)
+
+# With the subsampling
+CI_subsampling = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
+                              family = 1, level = 0.95, subsamplingSize = 100)
+
+print(CI_bootstrap$CI.Par)
+print(CI_subsampling$CI.Par)
+```
 
 
 

@@ -39,3 +39,16 @@ print(estimator_MLE)
 print(estimator_MMD)
 
 
+## -----------------------------------------------------------------------------
+
+# With the nonparametric bootstrap
+CI_bootstrap = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
+                              family = 1, level = 0.95)
+
+# With the subsampling
+CI_subsampling = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
+                              family = 1, level = 0.95, subsamplingSize = 100)
+
+print(CI_bootstrap$CI.Par)
+print(CI_subsampling$CI.Par)
+

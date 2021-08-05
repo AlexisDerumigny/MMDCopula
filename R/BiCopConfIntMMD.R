@@ -42,19 +42,19 @@
 #' \href{https://doi.org/10.1016/j.jmva.2019.05.007}{https://doi.org/10.1016/j.jmva.2019.05.007}.
 #'
 #' @examples
-#' data = VineCopula::BiCopSim(N = 500, family = 1, par = 0.3)
-#' result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1,
-#'   nResampling = 2, subsamplingSize = 50)
+#' data = VineCopula::BiCopSim(N = 200, family = 1, par = 0.3)
+#' result = BiCopConfIntMMD(x1 = data[,1], x2 = data[,2], family = 1,
+#'   nResampling = 2, subsamplingSize = 10)
 #' \donttest{
 #' data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
-#' result = BiCopMMDConfInt(x1 = data[,1], x2 = data[,2], family = 1)
+#' result = BiCopConfIntMMD(x1 = data[,1], x2 = data[,2], family = 1)
 #' result$CI.Tau
 #' result$CI.Par
 #' }
 #'
 #' @export
 #'
-BiCopMMDConfInt <- function(
+BiCopConfIntMMD <- function(
   x1, x2, family,
   nResampling = 100, subsamplingSize = length(x1),
   corrSubSampling = TRUE , level = 0.95, ...)
@@ -104,7 +104,7 @@ BiCopMMDConfInt <- function(
     )
 
   } else {
-    stop("Unknown family ", family, " in BiCopMMDConfInt.")
+    stop("Unknown family ", family, " in BiCopConfIntMMD.")
   }
 
   n = length(x1)
@@ -202,8 +202,9 @@ BiCopMMDConfInt <- function(
   CI.Tau = c(qLowTau, qHighTau)
   names(CI.Tau) <- paste(prettyNum(100 * c((1-level)/2 , (1 - (1-level)/2)  ), "%" ) )
 
-  return(list(CI.Par = CI.Par, CI.Tau = CI.Tau,
-              vecPar = vecPar, vecTau = vecTau))
+  return(list(CI.Par = CI.Par, CI.Tau = CI.Tau
+              # , vecPar = vecPar, vecTau = vecTau
+              ))
 }
 
 

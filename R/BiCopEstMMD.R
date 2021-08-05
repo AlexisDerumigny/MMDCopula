@@ -113,11 +113,11 @@ BiCopEstMMD <- function(
     # We try a random guess
     # tau = pcaPP::cor.fk(u1, u2)
     if (family %in% c(1, 5, 6,16,26,36)){
-      tau = runif(n = 1, min = -0.95, max = 0.95)
+      tau = stats::runif(n = 1, min = -0.95, max = 0.95)
     } else if (family %in% c(3, 23, 4, 24)){
-      tau = runif(n = 1, min = 0.05, max = 0.95)
+      tau = stats::runif(n = 1, min = 0.05, max = 0.95)
     } else if (family %in% c(13, 33, 14, 34)){
-      tau = runif(n = 1, min = -0.95, max = 0.05)
+      tau = stats::runif(n = 1, min = -0.95, max = -0.05)
     }
   }
   switch (

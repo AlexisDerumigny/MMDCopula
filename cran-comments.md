@@ -11,5 +11,5 @@ There were no ERROR or WARNINGs.
 There is only 1 NOTE : new submission.
 
 ## Reverse dependencies
-This is a new package so there are no reverse dependencies.
+There are no reverse dependencies.
 
