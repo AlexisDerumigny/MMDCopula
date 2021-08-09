@@ -39,3 +39,5 @@ vignettes/*.html
 .Rd2pdf
 doc
 Meta
+/doc/
+/Meta/

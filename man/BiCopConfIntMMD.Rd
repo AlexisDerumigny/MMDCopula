@@ -53,14 +53,14 @@ Confidence intervals for the estimated parameter
 of a bivariate parametric copula using MMD estimation
 }
 \examples{
-data = VineCopula::BiCopSim(N = 500, family = 1, par = 0.3)
+data = VineCopula::BiCopSim(N = 50, family = 1, par = 0.3)
 result = BiCopConfIntMMD(x1 = data[,1], x2 = data[,2], family = 1,
-  nResampling = 2, subsamplingSize = 20)
+  nResampling = 2, subsamplingSize = 10, niter = 10)
 \donttest{
-data = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
-result = BiCopConfIntMMD(x1 = data[,1], x2 = data[,2], family = 1)
-result$CI.Tau
-result$CI.Par
+data_ = VineCopula::BiCopSim(N = 1000, family = 1, par = 0.3)
+result_ = BiCopConfIntMMD(x1 = data_[,1], x2 = data_[,2], family = 1)
+result_$CI.Tau
+result_$CI.Par
 }
 
 }
@@ -72,5 +72,5 @@ ArXiv preprint \href{https://arxiv.org/abs/2010.00408}{arxiv:2010.00408}.
 Kojadinovic I., and Stemikovskaya, K. (2019)
 Subsampling (weighted smooth) empirical copula processes.
 Journal of Multivariate Analysis, 173, 704-723,
-\href{https://doi.org/10.1016/j.jmva.2019.05.007}{https://doi.org/10.1016/j.jmva.2019.05.007}.
+\doi{10.1016/j.jmva.2019.05.007}.
 }

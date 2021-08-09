@@ -7,10 +7,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
-
-
-```r
+```{r setup}
 library(MMDCopula)
 library(VineCopula)
 set.seed(1)
@@ -22,8 +26,7 @@ set.seed(1)
 We simulate 500 points from a Gaussian copula with parameter $0.5$.
 From this data, the parameter of the Gaussian copula is estimated, by Canonical Maximum Likelihood Estimation (MLE) and by Maximum Mean Discrepancy Minimization (MMD).
 
-
-```r
+```{r comparison_esti}
 
 my_data = BiCopSim(N = 500, family = 1, par = 0.5)
 
@@ -33,9 +36,8 @@ estimator_MLE = BiCopEst(u1 = my_data[,1], u2 = my_data[,2],
 estimator_MMD = BiCopEstMMD(u1 = my_data[,1], u2 = my_data[,2], family = 1)
 
 print(estimator_MLE)
-#> Bivariate copula: Gaussian (par = 0.5, tau = 0.33)
 print(estimator_MMD)
-#> Bivariate copula: Gaussian (par = 0.49, tau = 0.33)
+
 ```
 Both estimators are close to the true value, and the MLE estimator is slightly closer.
 
@@ -43,8 +45,7 @@ Both estimators are close to the true value, and the MLE estimator is slightly c
 
 We now add a contamination on 20 points of the dataset that are replaced by outliers in the top-left corner of the unit square $[0 , 0.001] \times [0.999, 1]$.
 
-
-```r
+```{r with_contam}
 
 my_data_contam = my_data
 
@@ -58,9 +59,8 @@ estimator_MLE = BiCopEst(u1 = my_data_contam[,1], u2 = my_data_contam[,2],
 
 estimator_MMD = BiCopEstMMD(u1 = my_data_contam[,1], u2 = my_data_contam[,2], family = 1)
 print(estimator_MLE)
-#> Bivariate copula: Gaussian (par = 0.03, tau = 0.02)
 print(estimator_MMD)
-#> Bivariate copula: Gaussian (par = 0.46, tau = 0.3)
+
 ```
 
 We can see that now the MLE estimator is very far away from the true value while the MMD estimators is still near the true value (even if it is farther away than in the uncontaminated case).
@@ -70,8 +70,7 @@ We can see that now the MLE estimator is very far away from the true value while
 
 We now compare the confidence intervals for the estimated parameter in the contaminated and in the non-contaminated case. These intervals are constructed using either the nonparametric bootstrap or using subsampling.
 
-
-```r
+```{r conf_int}
 
 # With the nonparametric bootstrap
 CI_bootstrap = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
@@ -82,11 +81,7 @@ CI_subsampling = BiCopConfIntMMD(x1 = my_data[,1], x2 = my_data[,2],
                               family = 1, level = 0.95, subsamplingSize = 100)
 
 print(CI_bootstrap$CI.Par)
-#>       2.5      97.5 
-#> 0.4081262 0.5701880
 print(CI_subsampling$CI.Par)
-#>       2.5      97.5 
-#> 0.3526828 0.7005315
 ```
 
 

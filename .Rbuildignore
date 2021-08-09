@@ -3,3 +3,5 @@
 ^doc$
 ^Meta$
 ^cran-comments\.md$
+^vignettes/precompile_vignettes\.R$
+^vignettes/introduction\.Rmd\.origin$
