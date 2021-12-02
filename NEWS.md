@@ -2,6 +2,7 @@
 # MMDCopula 0.2.1
 
 * New functions `BiCopPar2Tau.MO` and `BiCopTau2Par.MO` to convert between the parameter and the Kendall's tau of a Marshall Olkin copula.
+* New checks for finiteness of the arguments to `BiCopEstMMD`.
 
 # MMDCopula 0.2.0
 
