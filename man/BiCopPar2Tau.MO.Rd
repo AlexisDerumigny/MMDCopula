@@ -3,7 +3,7 @@
 \name{BiCopPar2Tau.MO}
 \alias{BiCopPar2Tau.MO}
 \alias{BiCopTau2Par.MO}
-\title{Convert between parameters and Kendall's tau for Marshall-Olkin copulas}
+\title{Convert between parameter and Kendall's tau for Marshall-Olkin copulas}
 \usage{
 BiCopPar2Tau.MO(par)
 
@@ -18,7 +18,7 @@ BiCopTau2Par.MO(tau)
 Either the Kendall's tau or the parameter of the Marshall-Olkin copula.
 }
 \description{
-Convert between parameters and Kendall's tau for Marshall-Olkin copulas
+Convert between parameter and Kendall's tau for Marshall-Olkin copulas
 }
 \examples{
 BiCopPar2Tau.MO(par = 0.5)

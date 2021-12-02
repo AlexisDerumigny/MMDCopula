@@ -92,11 +92,18 @@
 BiCopEstMMD <- function(
   u1, u2,
   family, tau = NULL, par = NULL, par2 = NULL,
-  kernel = "gaussian", gamma=0.23, alpha=1,
-  niter= 100, C_eta = 1, epsilon=0.0001,
-  method = "QMCV", quasiRNG = "sobol", ndrawings=10)
+  kernel = "gaussian", gamma = 0.23, alpha = 1,
+  niter = 100, C_eta = 1, epsilon = 0.0001,
+  method = "QMCV", quasiRNG = "sobol", ndrawings = 10)
 {
+  # Checking for input validity
   verifData(u1, u2)
+  if (!is.finite(gamma)){stop("Finite value for 'gamma' required.")}
+  if (!is.finite(alpha)){stop("Finite value for 'alpha' required.")}
+  if (!is.finite(epsilon)){stop("Finite value for 'epsilon' required.")}
+  if (!is.finite(niter)){stop("Finite value for 'niter' required.")}
+  if (!is.finite(C_eta)){stop("Finite value for 'C_eta' required.")}
+  if (!is.finite(ndrawings)){stop("Finite value for 'ndrawings' required.")}
 
   # Choice of the kernel
   if (is.character(kernel))
