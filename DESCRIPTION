@@ -1,7 +1,7 @@
 Package: MMDCopula
 Type: Package
 Title: Robust Estimation of Copulas by Maximum Mean Discrepancy
-Version: 0.2.0
+Version: 0.2.1
 Description: Provides functions for the robust estimation of 
 	parametric families of copulas using minimization of 
 	the Maximum Mean Discrepancy, following the article
@@ -14,7 +14,7 @@ Authors@R: c(
 	)
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends: 
 	R (>= 3.6.0)
 Imports: 

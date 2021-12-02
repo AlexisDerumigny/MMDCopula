@@ -16,6 +16,8 @@ Package MMDCopula
 
 * `BiCopEst.MO`: estimation of the parameter of a Marshall-Olkin copula.
 
+* `BiCopPar2Tau.MO` and `BiCopTau2Par.MO`: convert between the parameter and the Kendall's tau of a Marshall-Olkin copula.
+
 **Other functions**
 
 * `BiCopParamDistLp`: compute the $L^p$ distance between two parametric copula models.
