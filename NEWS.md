@@ -3,6 +3,8 @@
 
 * New functions `BiCopPar2Tau.MO` and `BiCopTau2Par.MO` to convert between the parameter and the Kendall's tau of a Marshall Olkin copula.
 * New checks for finiteness of the arguments to `BiCopEstMMD`.
+* Improvement of default values for gamma in `BiCopEstMMD`.
+
 
 # MMDCopula 0.2.0
 
@@ -13,6 +15,7 @@
 * Renaming of kernels such as `gaussian.KG` to `gaussian.Phi` for coherence.
 * Improvement of the stochastic gradient interface.
 * Better handling of limiting cases (when Kendall's tau is close to the boundary).
+
 
 # MMDCopula 0.1.0
 
