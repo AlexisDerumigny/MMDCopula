@@ -13,7 +13,7 @@ BiCopEstMMD(
   par = NULL,
   par2 = NULL,
   kernel = "gaussian",
-  gamma = 0.23,
+  gamma = "default",
   alpha = 1,
   niter = 100,
   C_eta = 1,
@@ -64,7 +64,8 @@ to indicates that the kernel \eqn{k(x,y)} is replaced by
 \eqn{k(\Phi^{-1}(x) , \Phi^{-1}(y))} where \eqn{\Phi^{-1}} denotes the quantile
 function of the standard Normal distribution.}
 
-\item{gamma}{parameter \eqn{\gamma} to be used in the kernel.}
+\item{gamma}{parameter \eqn{\gamma} to be used in the kernel.
+If \code{gamma="default"}, a default value is used.}
 
 \item{alpha}{parameter \eqn{\alpha} to be used in the kernel, if any.}
 

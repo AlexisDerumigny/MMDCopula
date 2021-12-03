@@ -21,6 +21,9 @@
 #'
 #' @param par2 initial value for the second parameter, if any. (Works only for Student copula).
 #'
+#' @param gamma parameter \eqn{\gamma} to be used in the kernel.
+#' If \code{gamma="default"}, a default value is used.
+#'
 #' @param niter the stochastic gradient algorithm is composed of two phases:
 #' a first "burn-in" phase and a second "averaging" phase.
 #' If \code{niter} is of size \code{1}, the same number of iterations is used for
@@ -51,7 +54,7 @@
 #' @examples
 #' # Estimation of a bivariate Gaussian copula with correlation 0.5.
 #' dataSampled = VineCopula::BiCopSim(N = 500, family = 1, par = 0.5)
-#' estimator = BiCopEstMMD(u1 = dataSampled[,1], u2 = dataSampled[,2], family = 1, niter=10)
+#' estimator = BiCopEstMMD(u1 = dataSampled[,1], u2 = dataSampled[,2], family = 1, niter = 10)
 #' estimator$par
 #'
 #' \donttest{
@@ -92,13 +95,13 @@
 BiCopEstMMD <- function(
   u1, u2,
   family, tau = NULL, par = NULL, par2 = NULL,
-  kernel = "gaussian", gamma = 0.23, alpha = 1,
+  kernel = "gaussian", gamma = "default", alpha = 1,
   niter = 100, C_eta = 1, epsilon = 0.0001,
   method = "QMCV", quasiRNG = "sobol", ndrawings = 10)
 {
   # Checking for input validity
   verifData(u1, u2)
-  if (!is.finite(gamma)){stop("Finite value for 'gamma' required.")}
+
   if (!is.finite(alpha)){stop("Finite value for 'alpha' required.")}
   if (!is.finite(epsilon)){stop("Finite value for 'epsilon' required.")}
   if (!is.finite(niter)){stop("Finite value for 'niter' required.")}
@@ -111,6 +114,25 @@ BiCopEstMMD <- function(
     kernelFun <- findKernelFunction(kernel)
   } else {
     kernelFun <- kernel
+  }
+
+  # Choice of gamma
+  if (gamma == "default"){
+    if (family == 1 || family == 5){
+      if (kernel %in% c("gaussian", "exp-l2", "exp-l1", "inv-l2", "inv-l1")){
+        gamma = 0.25
+      } else {
+        gamma = 0.8
+      }
+    } else {
+      if (kernel %in% c("gaussian", "exp-l2", "exp-l1", "inv-l2", "inv-l1")){
+        gamma = 0.1
+      } else {
+        gamma = 0.4
+      }
+    }
+  } else {
+    if (!is.finite(gamma)){stop("Finite value for 'gamma' required.")}
   }
 
   # If only one number of iterations is given,
