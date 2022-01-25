@@ -114,9 +114,9 @@ BiCopGradMMD(dataSampled[,1], dataSampled[,2], family = 1, par = 0.8)
 
 }
 \references{
-Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2020).
+Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2022).
 Estimation of copulas via Maximum Mean Discrepancy.
-ArXiv preprint \href{https://arxiv.org/abs/2010.00408}{arxiv:2010.00408}
+Journal of the American Statistical Association, \doi{10.1080/01621459.2021.2024836}.
 }
 \seealso{
 \code{\link{BiCopEstMMD}()} for the estimation of parametric bivariate copulas by

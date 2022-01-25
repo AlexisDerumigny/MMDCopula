@@ -2,7 +2,10 @@ Package MMDCopula
 ===================
 
 
-This package implements the robust estimation procedure of copulas via maximum mean discrepancy (MMD).
+This package implements the robust estimation procedure of copulas via maximum mean discrepancy (MMD),
+following the article Alquier, Chérief-Abdellatif, Derumigny, and Fermanian, J.D. (2022),
+Estimation of copulas via Maximum Mean Discrepancy.
+*Journal of the American Statistical Association*, [doi:10.1080/01621459.2021.2024836](https://doi.org/10.1080/01621459.2021.2024836).
 
 
 **How to install**

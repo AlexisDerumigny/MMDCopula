@@ -46,9 +46,9 @@
 #' \code{\link{BiCopGradMMD}()} for the computation of the stochastic gradient.
 #' \code{\link{BiCopEst.MO}} for the estimation of Marshall-Olkin copulas by MMD.
 #'
-#' @references Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2020).
+#' @references Alquier, P., Chérief-Abdellatif, B.-E., Derumigny, A., and Fermanian, J.D. (2022).
 #' Estimation of copulas via Maximum Mean Discrepancy.
-#' ArXiv preprint \href{https://arxiv.org/abs/2010.00408}{arxiv:2010.00408}
+#' Journal of the American Statistical Association, \doi{10.1080/01621459.2021.2024836}.
 #'
 #'
 #' @examples

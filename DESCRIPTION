@@ -5,7 +5,7 @@ Version: 0.2.1
 Description: Provides functions for the robust estimation of 
 	parametric families of copulas using minimization of 
 	the Maximum Mean Discrepancy, following the article
-	Alquier, Chérief-Abdellatif, Derumigny and Fermanian (2020) <arXiv:2010.00408>.
+	Alquier, Chérief-Abdellatif, Derumigny and Fermanian (2022) <doi:10.1080/01621459.2021.2024836>.
 Authors@R: c(
     person("Alexis", "Derumigny",, email = "a.f.f.derumigny@tudelft.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6163-8097")),
     person("Pierre", "Alquier",, email = "pierre.alquier.stat@gmail.com", role = "aut", comment = c(ORCID = "0000-0003-4249-7337")),
