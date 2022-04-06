@@ -27,7 +27,10 @@ findKernelFunction = function(kernel) {
     "inv-l1.Phi" = { kernelFun <- KerMMD.inv.l1.Phi },
 
     {
-      stop(paste0("Unknown kernel: ",kernel))
+      stop("Unknown kernel: ", kernel, ". ",
+           "Possible values are: 'gaussian', 'gaussian.Phi', ",
+           "'exp-l2', 'exp-l2.Phi', 'exp-l1', 'exp-l1.Phi', ",
+           "'inv-l2', 'inv-l2.Phi', 'inv-l1' and 'inv-l1.Phi'.")
     }
   )
 

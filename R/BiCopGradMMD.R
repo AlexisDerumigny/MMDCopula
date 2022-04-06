@@ -31,13 +31,13 @@
 #'   \itemize{
 #'     \item \code{gaussian}: Gaussian kernel \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_2^2)
 #'     }{k(x,y) = exp( - || (x-y) / gamma ||_2^2)}
-#'     \item \code{exp.l2}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_2)
+#'     \item \code{exp-l2}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_2)
 #'     }{k(x,y) = exp( - || (x-y) / gamma ||_2)}
-#'     \item \code{exp.l1}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_1)
+#'     \item \code{exp-l1}: \eqn{k(x,y) = \exp(-\|\frac{x-y}{\gamma}\|_1)
 #'     }{k(x,y) = exp( - || (x-y) / gamma ||_1)}
-#'     \item \code{inv.l2}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_2)^\alpha
+#'     \item \code{inv-l2}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_2)^\alpha
 #'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_2 )^\alpha}
-#'     \item \code{inv.l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
+#'     \item \code{inv-l1}: \eqn{k(x,y) = 1/(1+\|\frac{x-y}{\gamma}\|_1)^\alpha
 #'     }{k(x,y) = 1 / ( 1 + || (x-y) / gamma ||_1 )^\alpha}
 #'   }
 #'  Each of these names can receive the suffix ".Phi", such as "gaussian.Phi"
