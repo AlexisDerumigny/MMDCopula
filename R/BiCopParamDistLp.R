@@ -189,8 +189,8 @@ BiCopParamDistLp <- function(family, par, par_p, par2 = par, par2_p = par_p, fam
         }
       })
 
-    result = optim(par = c(0.2, 0.2), fn = fn, gr = gr,
-                   lower = truncVal, upper = 1 - truncVal, method = "L-BFGS-B")
+    result = stats::optim(par = c(0.2, 0.2), fn = fn, gr = gr,
+                          lower = truncVal, upper = 1 - truncVal, method = "L-BFGS-B")
 
     return (list(distance = -result$value, u_max = result$par ))
   }

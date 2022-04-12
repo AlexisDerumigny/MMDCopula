@@ -13,7 +13,8 @@ BiCopParamDistLp(
   family_p = family,
   p,
   type,
-  maxEval = 0
+  maxEval = 0,
+  truncVal = 0
 )
 }
 \arguments{
@@ -34,14 +35,17 @@ BiCopParamDistLp(
 \item{p}{determines the \eqn{L_p} distance that is used.}
 
 \item{type}{type of the functions considered.
-Can be \code{cdf} for the distance between the two cumulative distribution functions
-or \code{pdf} for the distance between the two probability density functions.}
+Can be \code{"cdf"} for the distance between the two cumulative distribution functions
+or \code{"pdf"} for the distance between the two probability density functions.}
 
-\item{maxEval}{maximum number of evaluation of the function be integrated.
-If 0, then no maximum limit is given.}
+\item{maxEval}{maximum number of evaluation of the function to be integrated.
+If 0, then no maximum limit is given. (Only used if \code{p < Inf}).}
+
+\item{truncVal}{the distance is computed using the supremum or the integral
+of the function on \eqn{[truncVal, 1 - truncVal]^2}.}
 }
 \value{
-a list of four items
+If \code{p < Inf}, it returns a list of four items
   \itemize{
     \item \code{distance} the value of the distance
     \item \code{integral} the value of the integral, which is
@@ -51,6 +55,12 @@ a list of four items
      called by \code{cubature::\link[cubature]{hcubature}()}.
      This should be 0 if there is no error.
   }
+If \code{p = Inf}, it returns a list of two items
+  \itemize{
+    \item \code{distance} the maximum difference between the two copulas
+    (respectively, between the two copula densities).
+    \item \code{u_max} the point at which this difference is attained.
+ }
 }
 \description{
 This function uses the numerical integration procedure
@@ -61,6 +71,7 @@ the distribution or between the densities of two bivariate copulas.
 # Distance between the densities of a Gaussian copula with correlation 0.5
 # and a Gaussian copula with correlation 0.2
 BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = 2, type = "cdf", maxEval = 10)
+BiCopParamDistLp(family = 1, par = 0.5, par_p = 0.2, p = Inf, type = "cdf")
 
 # Distance between the cdf of a Student copula
 # with correlation 0.5 and 4 degrees of freedom
