@@ -1,11 +1,25 @@
 
 # MMDCopula 0.2.1
 
-* New functions `BiCopPar2Tau.MO` and `BiCopTau2Par.MO` to convert between the parameter and the Kendall's tau of a Marshall Olkin copula.
+
+## NEW FEATURES
+
+* New functions `BiCopPar2Tau.MO` and `BiCopTau2Par.MO` to convert between the parameter and the Kendall's tau of a Marshall-Olkin copula.
+
+* New argument `truncVal` of the function `BiCopParamDistLp` to allow for computation of the norm on a smaller subset of the unit square [0,1]^2.
+`BiCopParamDistLp` now also works for `p=Inf` (i.e., the supremum norm).
+
 * New checks for finiteness of the arguments to `BiCopEstMMD`.
+
+
+## OTHER IMPROVEMENTS
+
 * Improvement of default values for gamma in `BiCopEstMMD`.
-* Updated the references
+
+* Updated the references.
+
 * Fixed the documentation of the parameter `kernel` for the functions `BiCopEstMMD` and `BiCopGradMMD`.
+
 
 
 # MMDCopula 0.2.0
