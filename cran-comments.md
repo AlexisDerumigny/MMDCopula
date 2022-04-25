@@ -1,9 +1,9 @@
 
 ## Test environments
 
-* Windows 10 (devel, release)
+* Windows 10 (release)
+* Windows Server 2022 (devel)
 * Fedora Linux (devel)
-* Debian Linux (devel)
 * Ubuntu Linux (release)
 * macOS High Sierra (release)
 

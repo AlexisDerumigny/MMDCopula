@@ -20,6 +20,7 @@
 
 * Fixed the documentation of the parameter `kernel` for the functions `BiCopEstMMD` and `BiCopGradMMD`.
 
+* New dependence `wdm` instead of `pcaPP` for fast computation of Kendall's tau.
 
 
 # MMDCopula 0.2.0

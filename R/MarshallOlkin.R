@@ -214,7 +214,7 @@ BiCopEst.MO.curve = function(u1,u2)
 # based on the inversion of Kendall's tau
 BiCopEst.MO.itau = function(u1,u2)
 {
-  tau = pcaPP::cor.fk(u1, u2)
+  tau = wdm::wdm(u1, u2, method = "kendall")
   return(list(tau = tau, par = 2*tau/(1+tau)))
 }
 

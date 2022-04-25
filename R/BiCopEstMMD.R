@@ -140,7 +140,7 @@ BiCopEstMMD <- function(
   niter = rep(niter, length.out = 2)
   if (is.null(tau)){
     # We try a random guess
-    # tau = pcaPP::cor.fk(u1, u2)
+    # tau = wdm::wdm(u1, u2, method = "kendall")
     if (family %in% c(1, 5, 6,16,26,36)){
       tau = stats::runif(n = 1, min = -0.95, max = 0.95)
     } else if (family %in% c(3, 23, 4, 24)){
@@ -290,7 +290,7 @@ BiCopEstMMD.QMCV.student <- function(
   kernelFun, gamma, alpha, epsilon,
   quasiRNGFun, ndrawings, niter, C_eta)
 {
-  par = VineCopula::BiCopTau2Par(family = 2, tau = pcaPP::cor.fk(u1, u2))
+  par = VineCopula::BiCopTau2Par(family = 2, tau = wdm::wdm(u1, u2, method = "kendall"))
 
   # 1- Burn-in phase
   paramIter = c(par, par2)
